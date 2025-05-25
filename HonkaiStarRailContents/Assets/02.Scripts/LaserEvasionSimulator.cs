@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class LaserEvasionSimulator : MonoBehaviour
 {
+    public bool isPlayerHit { get; private set; }
+
     [Header("UI")]
     [SerializeField] private Button startBtn;
     [SerializeField] private Button resetBtn;
@@ -17,7 +19,7 @@ public class LaserEvasionSimulator : MonoBehaviour
 
     [Header("Setting")]
     [SerializeField, Min(1)] private int totalRound = 6;
-    [SerializeField, Min(1)] private int roundInterval = 2;
+    [SerializeField, Min(1)] private float roundInterval = 2.5f;
     [SerializeField, Min(1)] private int roundCountDown = 3;
     [SerializeField] private int goal1 = 4;
     [SerializeField] private int goal2 = 6;
@@ -26,6 +28,8 @@ public class LaserEvasionSimulator : MonoBehaviour
 
     private int[][] turretGraph;
     private Coroutine roundRoutineCor;
+    private LaserEvasionTurretCollider[] laserCollider;
+    private int avoidCount = 0;
 
     //----------------------------------------------------
 
@@ -38,9 +42,44 @@ public class LaserEvasionSimulator : MonoBehaviour
     {
         PrivSettingUI();
         PrivSettingTurret();
+        PrivSettingHitColliderEvent();
+        PrivActiveLaserColliders(false);
     }
 
     //----------------------------------------------------
+
+    private void PrivSettingHitColliderEvent()
+    {
+        laserCollider = new LaserEvasionTurretCollider[turret.Length];
+        for (int i = 0; i < laserCollider.Length; i++)
+        {
+            laserCollider[i] = turret[i].GetComponentInChildren<LaserEvasionTurretCollider>();
+            laserCollider[i].Simulator = this;
+            laserCollider[i].onPlayerHit += PrivProcessHitResult;
+        }
+    }
+
+    private void PrivProcessHitResult(bool tf)
+    {
+        isPlayerHit = tf;
+        if(isPlayerHit ==  true)
+        {
+            stateTxt.text = "회피 실패";
+        }
+        else if(isPlayerHit == false)
+        {
+            stateTxt.text = "회피 성공";
+            avoidCount += 1;
+        }
+    }
+
+    private void PrivActiveLaserColliders(bool tf)
+    {
+        foreach(var i in turret)
+        {
+            i.BoxCollider.gameObject.SetActive(tf);
+        }
+    }
 
     private void PrivSettingUI()
     {
@@ -52,12 +91,15 @@ public class LaserEvasionSimulator : MonoBehaviour
         curRoundTxt.text = $"0 Round";
         goal1Txt.text = $"목표1) {goal1}회 회피";
         goal2Txt.text = $"목표2) {goal2}회 회피";
+        recordTxt.text = $"0회 회피 성공\n 0라운드 남음";
     }
 
     private void PrivReset()
     {
         PrivSettingUI();
-        PrivResetLaser();
+        PrivResetLaserLine();
+        PrivActiveLaserColliders(false);
+        avoidCount = 0;
     }
 
     private void PrivStartRound()
@@ -75,11 +117,12 @@ public class LaserEvasionSimulator : MonoBehaviour
     {
         for (int i = 1; i <= totalRound; i++)
         {
+            //라운드 시작
             yield return new WaitForSeconds(roundInterval);
-            Debug.Log($"{i}번째 라운드 시작");
+            Debug.Log($"{i}라운드 시작");
             curRoundTxt.text = $"{i} Round";
 
-            PrivResetLaser();
+            //발사 카운트다운
             List<(int start, int end)> path = PrivSettingLaserPath(i + 1);
             foreach (var node in path)
             {
@@ -92,9 +135,29 @@ public class LaserEvasionSimulator : MonoBehaviour
             }
             stateTxt.text = "";
 
+            //발사
             foreach (var node in path)
             {
                 yield return StartCoroutine(PrivFiringLaser(node.start, node.end));
+            }
+            yield return new WaitForSeconds(1f);
+            PrivResetLaserLine();
+            PrivActiveLaserColliders(false);
+
+            //라운드 결과
+            PrivProcessHitResult(isPlayerHit);
+            foreach (var j in laserCollider)
+            {
+                isPlayerHit = false;
+            }
+            recordTxt.text = $"{avoidCount}회 회피 성공\n {totalRound - i}라운드 남음";
+            if (avoidCount == goal1)
+            {
+                goal1Txt.text = $"목표1) {goal1}회 회피 O";
+            }
+            if (avoidCount == goal2)
+            {
+                goal2Txt.text = $"목표2) {goal2}회 회피 O";
             }
         }
 
@@ -123,7 +186,7 @@ public class LaserEvasionSimulator : MonoBehaviour
         }
     }
 
-    private void PrivResetLaser()
+    private void PrivResetLaserLine()
     {
         foreach (LaserEvasionTurret turret in turret)
         {
@@ -178,7 +241,24 @@ public class LaserEvasionSimulator : MonoBehaviour
 
         Debug.Log($"{start}번에서 {end}번 연결");
         PrivSettingLineRenderer(turret[start], 1f, Color.green, turret[start].gameObject.transform.position, turret[end].gameObject.transform.position);
-        //TODO 캡슐콜라이더 동적관리하기
+        PrivSettingBoxCollider(turret[start]);
+    }
+
+    private void PrivSettingBoxCollider(LaserEvasionTurret turret)
+    {
+        LineRenderer line = turret.GetComponent<LineRenderer>();
+        Vector3 start = line.GetPosition(0);
+        Vector3 end = line.GetPosition(1);
+        Vector3 center = (start + end) / 2f;
+        Vector3 direction = end - start;
+        float length = direction.magnitude;
+
+        // 크기 설정 (x: 두께, y: 높이, z: 길이)
+        turret.BoxCollider.size = new Vector3(1f, 1f, length);
+        // 위치 및 회전 설정
+        turret.BoxCollider.gameObject.transform.position = center;
+        turret.BoxCollider.gameObject.transform.rotation = Quaternion.LookRotation(direction.normalized);
+        turret.BoxCollider.gameObject.SetActive(true);
     }
 
     private void PrivDrawPathLine(int start, int end)
