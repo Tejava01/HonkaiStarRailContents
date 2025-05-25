@@ -13,8 +13,8 @@ public class LaserEvasionSimulator : MonoBehaviour
     [SerializeField, Min(1)] private float roundInterval = 2.5f;
     [SerializeField, Min(1)] private int roundCountDown = 3;
 
-    [SerializeField, Range(1,10)] private int goal1 = 4;
-    [SerializeField, Range(1,10)] private int goal2 = 6;
+    [SerializeField] private int goal1 = 4;
+    [SerializeField] private int goal2 = 6;
 
     [SerializeField] private float fireInterval = 0.25f;
     [SerializeField] private LaserEvasionTurret[] turret;
