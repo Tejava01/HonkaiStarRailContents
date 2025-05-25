@@ -66,6 +66,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af3420a4500292f47981abb36ade024e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ColliderHitTag: Player
 --- !u!1 &7157018559499017430
 GameObject:
   m_ObjectHideFlags: 0
@@ -165,6 +166,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04ad3756245a41a4297035ac01ef98bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TurretCollider: {fileID: 4103718455701681495}
+  LineRenderer: {fileID: 4273514206639395596}
 --- !u!120 &4273514206639395596
 LineRenderer:
   serializedVersion: 2

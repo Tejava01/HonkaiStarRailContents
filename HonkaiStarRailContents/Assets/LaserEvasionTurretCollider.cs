@@ -5,18 +5,16 @@ using UnityEngine;
 
 public class LaserEvasionTurretCollider : MonoBehaviour
 {
-    public LaserEvasionSimulator Simulator { private get; set; }
+    //클래스 관계역전 조심할것
+    [SerializeField] private string ColliderHitTag = "Player";
+
     public event Action<bool> onPlayerHit;
 
     //----------------------------------------------------
-
     private void OnTriggerEnter(Collider other)
     {
-        if (Simulator.IsPlayerHit == true) return;
-
-        if (other.gameObject.tag == "Player")
+        if (other.gameObject.tag == ColliderHitTag)
         {
-            Debug.Log("충돌");
             onPlayerHit?.Invoke(true);
         }
     }
