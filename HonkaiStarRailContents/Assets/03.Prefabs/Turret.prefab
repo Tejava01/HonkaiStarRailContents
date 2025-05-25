@@ -165,7 +165,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04ad3756245a41a4297035ac01ef98bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boxCollider: {fileID: 0}
 --- !u!120 &4273514206639395596
 LineRenderer:
   serializedVersion: 2

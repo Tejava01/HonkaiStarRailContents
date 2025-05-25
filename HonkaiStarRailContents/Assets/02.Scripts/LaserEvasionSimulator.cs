@@ -6,16 +6,7 @@ using UnityEngine.UI;
 
 public class LaserEvasionSimulator : MonoBehaviour
 {
-    public bool isPlayerHit { get; private set; }
-
-    [Header("UI")]
-    [SerializeField] private Button startBtn;
-    [SerializeField] private Button resetBtn;
-    [SerializeField] private Text curRoundTxt;
-    [SerializeField] private Text stateTxt;
-    [SerializeField] private Text goal1Txt;
-    [SerializeField] private Text goal2Txt;
-    [SerializeField] private Text recordTxt;
+    [SerializeField] private bool isPlayerHit= false;
 
     [Header("Setting")]
     [SerializeField, Min(1)] private int totalRound = 6;
@@ -26,10 +17,17 @@ public class LaserEvasionSimulator : MonoBehaviour
     [SerializeField] private float fireInterval = 0.25f;
     [SerializeField] private LaserEvasionTurret[] turret;
 
+    [Header("UI")]
+    [SerializeField] private UIWidgetScreen UIWidgetScreen;
+
     private int[][] turretGraph;
     private Coroutine roundRoutineCor;
     private LaserEvasionTurretCollider[] laserCollider;
     private int avoidCount = 0;
+
+    //----------------------------------------------------
+
+    public bool IsPlayerHit { get { return isPlayerHit; } }
 
     //----------------------------------------------------
 
@@ -64,11 +62,11 @@ public class LaserEvasionSimulator : MonoBehaviour
         isPlayerHit = tf;
         if(isPlayerHit ==  true)
         {
-            stateTxt.text = "회피 실패";
+            UIWidgetScreen.StateTxt.text = "회피 실패";
         }
         else if(isPlayerHit == false)
         {
-            stateTxt.text = "회피 성공";
+            UIWidgetScreen.StateTxt.text = "회피 성공";
             avoidCount += 1;
         }
     }
@@ -83,15 +81,15 @@ public class LaserEvasionSimulator : MonoBehaviour
 
     private void PrivSettingUI()
     {
-        startBtn.onClick.AddListener(PrivStartRound);
-        startBtn.gameObject.SetActive(true);
-        resetBtn.onClick.AddListener(PrivReset);
-        resetBtn.gameObject.SetActive(false);
-        stateTxt.text = $"";
-        curRoundTxt.text = $"0 Round";
-        goal1Txt.text = $"목표1) {goal1}회 회피";
-        goal2Txt.text = $"목표2) {goal2}회 회피";
-        recordTxt.text = $"0회 회피 성공\n 0라운드 남음";
+        UIWidgetScreen.StartBtn.onClick.AddListener(PrivStartRound);
+        UIWidgetScreen.StartBtn.gameObject.SetActive(true);
+        UIWidgetScreen.ResetBtn.onClick.AddListener(PrivReset);
+        UIWidgetScreen.ResetBtn.gameObject.SetActive(false);
+        UIWidgetScreen.StateTxt.text = $"";
+        UIWidgetScreen.CurRoundTxt.text = $"0 Round";
+        UIWidgetScreen.Goal1Txt.text = $"목표1) {goal1}회 회피";
+        UIWidgetScreen.Goal2Txt.text = $"목표2) {goal2}회 회피";
+        UIWidgetScreen.RecordTxt.text = $"0회 회피 성공\n 0라운드 남음";
     }
 
     private void PrivReset()
@@ -104,7 +102,7 @@ public class LaserEvasionSimulator : MonoBehaviour
 
     private void PrivStartRound()
     {
-        startBtn.gameObject.SetActive(false);
+        UIWidgetScreen.StartBtn.gameObject.SetActive(false);
         //코루틴 중복방지
         if (roundRoutineCor != null)
         {
@@ -120,7 +118,7 @@ public class LaserEvasionSimulator : MonoBehaviour
             //라운드 시작
             yield return new WaitForSeconds(roundInterval);
             Debug.Log($"{i}라운드 시작");
-            curRoundTxt.text = $"{i} Round";
+            UIWidgetScreen.CurRoundTxt.text = $"{i} Round";
 
             //발사 카운트다운
             List<(int start, int end)> path = PrivSettingLaserPath(i + 1);
@@ -130,10 +128,10 @@ public class LaserEvasionSimulator : MonoBehaviour
             }
             for (int j = roundCountDown; j > 0; j--)
             {
-                stateTxt.text = $"{j}";
+                UIWidgetScreen.StateTxt.text = $"{j}";
                 yield return new WaitForSeconds(1f);
             }
-            stateTxt.text = "";
+            UIWidgetScreen.StateTxt.text = "";
 
             //발사
             foreach (var node in path)
@@ -146,23 +144,20 @@ public class LaserEvasionSimulator : MonoBehaviour
 
             //라운드 결과
             PrivProcessHitResult(isPlayerHit);
-            foreach (var j in laserCollider)
-            {
-                isPlayerHit = false;
-            }
-            recordTxt.text = $"{avoidCount}회 회피 성공\n {totalRound - i}라운드 남음";
+            isPlayerHit = false;
+            UIWidgetScreen.RecordTxt.text = $"{avoidCount}회 회피 성공\n {totalRound - i}라운드 남음";
             if (avoidCount == goal1)
             {
-                goal1Txt.text = $"목표1) {goal1}회 회피 O";
+                UIWidgetScreen.Goal1Txt.text = $"목표1) {goal1}회 회피 O";
             }
             if (avoidCount == goal2)
             {
-                goal2Txt.text = $"목표2) {goal2}회 회피 O";
+                UIWidgetScreen.Goal2Txt.text = $"목표2) {goal2}회 회피 O";
             }
         }
 
         Debug.Log("종료");
-        resetBtn.gameObject.SetActive(true);
+        UIWidgetScreen.ResetBtn.gameObject.SetActive(true);
     }
 
     private void PrivSettingGoal()

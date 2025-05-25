@@ -12,7 +12,7 @@ public class LaserEvasionTurretCollider : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (Simulator.isPlayerHit == true) return;
+        if (Simulator.IsPlayerHit == true) return;
 
         if (other.gameObject.tag == "Player")
         {
