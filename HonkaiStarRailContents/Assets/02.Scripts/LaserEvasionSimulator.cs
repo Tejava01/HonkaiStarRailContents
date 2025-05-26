@@ -1,74 +1,74 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using System.IO;
 using UnityEngine;
-using UnityEngine.UI;
-using static System.Net.Mime.MediaTypeNames;
 
 public class LaserEvasionSimulator : MonoBehaviour
 {
     [Header("Setting")]
     [SerializeField, Min(1)] private int totalRound = 6;
-    [SerializeField, Min(1)] private float roundInterval = 2.5f;
+    [SerializeField, Min(1)] private float roundDelay = 2.5f;
     [SerializeField, Min(1)] private int roundCountDown = 3;
-
-    [SerializeField] private int goal1 = 4;
-    [SerializeField] private int goal2 = 6;
-
-    [SerializeField] private float fireInterval = 0.25f;
+    [SerializeField, Min(1)] private int goal1 = 4;
+    [SerializeField, Min(1)] private int goal2 = 6;
+    [SerializeField, Min(1)] private float fireDelay = 0.25f;
     [SerializeField] private LaserEvasionTurret[] turret;
 
     [Header("UI")]
     [SerializeField] private UIWidgetScreen UIWidgetScreen;
 
-    private int[][] turretGraph;
+    private int[][] turretGraphAry;
     private Coroutine roundRoutineCor;
-
     private bool isHit = false;
     private int avoidCount = 0;
-
-    List<(int start, int end)> path = new List<(int start, int end)>();
+    List<(int start, int end)> laserPathList = new List<(int , int )>();
     Queue<int> turretQ = new Queue<int>();
-
-    List<int> currentAvailable = new List<int>();
     int[] visitedAry = null;
+    List<int> availableNodeList = new List<int>();
 
     WaitForSeconds wait_1Second = new WaitForSeconds(1f);
-    WaitForSeconds wait_RoundInterval;
-    WaitForSeconds wait_FireInterval;
+    WaitForSeconds wait_RoundDelay;
+    WaitForSeconds wait_FireDelay;
 
     //----------------------------------------------------
-    private void OnValidate()
-    {
-        goal1 = Mathf.Clamp(goal1, 1, totalRound);
-        goal2 = Mathf.Clamp(goal2, 1, totalRound);
-    }
 
     private void Awake()
     {
+        turretGraphAry = new int[turret.Length][];
         visitedAry = new int[turret.Length];
-        turretGraph = new int[turret.Length][];
-        wait_RoundInterval = new WaitForSeconds(roundInterval);
-        wait_FireInterval = new WaitForSeconds(fireInterval);
+        wait_RoundDelay = new WaitForSeconds(roundDelay);
+        wait_FireDelay = new WaitForSeconds(fireDelay);
 
-        PrivUIReset();
-        PrivTurretSetting();
+        PrivResetUI();
+        PrivSettingTurretGraph();
         PrivSettingHitColliderEvent();
     }
 
     //----------------------------------------------------
-    private void PrivUIReset()
+    private void PrivResetUI()
     {
         UIWidgetScreen.StartBtn.onClick.AddListener(OnClickBtnStartRound);
         UIWidgetScreen.StartBtn.gameObject.SetActive(true);
         UIWidgetScreen.ResetBtn.onClick.AddListener(OnClickBtnReset);
         UIWidgetScreen.ResetBtn.gameObject.SetActive(false);
-        UIWidgetScreen.StateTxt.text = $"";
         UIWidgetScreen.CurRoundTxt.text = $"0 Round";
+        UIWidgetScreen.StateTxt.text = $"";
         UIWidgetScreen.Goal1Txt.text = $"목표1) {goal1}회 회피";
         UIWidgetScreen.Goal2Txt.text = $"목표2) {goal2}회 회피";
         UIWidgetScreen.RecordTxt.text = $"0회 회피 성공\n 0라운드 남음";
+    }
+
+    private void PrivSettingTurretGraph()
+    {
+        int n = turret.Length;
+
+        for (int i = 0; i < n; i++)
+        {
+            turretGraphAry[i] = new int[n - 3];
+            for (int j = 0; j < n - 3; j++)
+                turretGraphAry[i][j] = (i + j + 2) % n;
+        }
     }
 
     private void PrivSettingHitColliderEvent()
@@ -76,30 +76,14 @@ public class LaserEvasionSimulator : MonoBehaviour
         for (int i = 0; i < turret.Length; i++)
         {
             var collider = turret[i].GetCollider();
-            collider.onPlayerHit += PrivProcessHitResult;
+            collider.onPlayerHit += PrivFailAvoid;
         }
     }
 
-    private void PrivTurretSetting()
+    private void PrivFailAvoid()
     {
-        int n = turret.Length;
-
-        for (int i = 0; i < n; i++)
-        {
-            turretGraph[i] = new int[n - 3];
-            for (int j = 0; j < n - 3; j++)
-            {
-                turretGraph[i][j] = (i + j + 2) % n;
-            }
-        }
-    }
-
-    private void PrivProcessHitResult(bool tf)
-    {
-        if(tf ==  true)
-            UIWidgetScreen.StateTxt.text = "회피 실패";
-
-        isHit = tf;
+        UIWidgetScreen.StateTxt.text = "회피 실패";
+        isHit = false;
     }
 
     #region ==================Round Routine=================================
@@ -108,15 +92,13 @@ public class LaserEvasionSimulator : MonoBehaviour
         for (int i = 1; i <= totalRound; i++)
         {
             //라운드 시작
-            yield return wait_RoundInterval;
+            yield return wait_RoundDelay;
             PrivRoundStart(i);
 
-            //경로 지정
+            //경로 지정 및 안내
             PrivSettingLaserPath(i + 1);
-            foreach (var node in path)
-            {
+            foreach (var node in laserPathList)
                 PrivDrawPathLine(node.start, node.end);
-            }
 
             //카운트 다운
             for (int j = roundCountDown; j > 0; j--)
@@ -127,16 +109,15 @@ public class LaserEvasionSimulator : MonoBehaviour
             UIWidgetScreen.StateTxt.text = "";
 
             //발사
-            foreach (var node in path)
+            foreach (var node in laserPathList)
             {
                 PrivFiringLaser(node.start, node.end);
-                yield return wait_FireInterval;
+                yield return wait_FireDelay;
             }
             yield return wait_1Second;
 
             //라운드 결과
             PrivCheckRoundResult(i);
-
             PrivTurretReset();
         }
 
@@ -155,61 +136,65 @@ public class LaserEvasionSimulator : MonoBehaviour
         if (isHit == false)
         {
             UIWidgetScreen.StateTxt.text = "회피 성공";
-            avoidCount++;
+            avoidCount += 1;
         }
-
         UIWidgetScreen.RecordTxt.text = $"{avoidCount}회 회피 성공\n {totalRound - currentRound}라운드 남음";
         if (avoidCount == goal1)
-        {
             UIWidgetScreen.Goal1Txt.text = $"목표1) {goal1}회 회피 O";
-        }
         if (avoidCount == goal2)
-        {
             UIWidgetScreen.Goal2Txt.text = $"목표2) {goal2}회 회피 O";
-        }
     }
     #endregion
 
     private void PrivSettingLaserPath(int maxCount)
     {
-        path.Clear();
+        laserPathList.Clear();
         turretQ.Clear();
-        for (int i = 0; i < visitedAry.Length; i++)
+        for (int i = 0; i < turret.Length; i++)
             visitedAry[i] = 0;
 
         int runCount = 0;
-        int n = turret.Length;
-        int start = UnityEngine.Random.Range(0, n);
+        int start = UnityEngine.Random.Range(0, turret.Length);
 
         turretQ.Enqueue(start);
         visitedAry[start] = 1;
 
         while (turretQ.Count > 0)
         {
-            currentAvailable.Clear();
+            availableNodeList.Clear();
 
             int curNode = turretQ.Dequeue();
-
-            foreach (int node in turretGraph[curNode])
+            // 아직 방문 안 한 노드만 후보로
+            foreach (int nextNode in turretGraphAry[curNode])
             {
-                if (visitedAry[node] == 0)
-                    currentAvailable.Add(node);
+                if (visitedAry[nextNode] == 0)
+                    availableNodeList.Add(nextNode);
             }
 
             // 연결할 곳이 없거나 레이저상한에 걸림
-            if (currentAvailable.Count == 0 || runCount == maxCount)
+            if (availableNodeList.Count == 0 || runCount == maxCount)
             {
                 Debug.Log("경로 계산 완료");
                 break;
             }
 
-            int next = UnityEngine.Random.Range(0, currentAvailable.Count);
-            turretQ.Enqueue(currentAvailable[next]);
-            visitedAry[currentAvailable[next]] = 1; 
+            int next = availableNodeList[UnityEngine.Random.Range(0, availableNodeList.Count)];
+            turretQ.Enqueue(next);
+            visitedAry[next] = 1;
 
-            path.Add((curNode, currentAvailable[next]));
+            laserPathList.Add((curNode, next));
             runCount += 1;
         }
+    }
+    private void PrivDrawPathLine(int start, int end)
+    {
+        Vector3 startPos = turret[start].transform.position;
+        Vector3 endPos = turret[end].transform.position;
+
+        //전체 거리의 30%지점 구하기(벡터 러프함수 있음) 
+        Vector3 previewEndPos = startPos + (endPos - startPos) * 0.3f;
+
+        turret[start].DoSettingLineRenderer(0.5f, Color.red, startPos, previewEndPos);
     }
 
     private void PrivFiringLaser(int start, int end)
@@ -237,17 +222,7 @@ public class LaserEvasionSimulator : MonoBehaviour
         turret.BoxCollider.gameObject.SetActive(true);
     }
 
-    private void PrivDrawPathLine(int start, int end)
-    {
-        Vector3 startPos = turret[start].transform.position;
-        Vector3 endPos = turret[end].transform.position;
-
-        //전체 거리의 30%지점 구하기(벡터 러프함수 있음) 
-        Vector3 previewEndPos = startPos + (endPos - startPos) * 0.3f;
-
-        turret[start].DoSettingLineRenderer(0.5f, Color.red, startPos, previewEndPos);
-    }
-
+    
     //---------------------------------------------------
     private void PrivTurretReset()
     {
@@ -256,6 +231,7 @@ public class LaserEvasionSimulator : MonoBehaviour
     }
 
     //-------------------------------------------------------
+
     private void OnClickBtnStartRound()
     {
         UIWidgetScreen.StartBtn.gameObject.SetActive(false);
@@ -269,7 +245,7 @@ public class LaserEvasionSimulator : MonoBehaviour
 
     private void OnClickBtnReset()
     {
-        PrivUIReset();
+        PrivResetUI();
         PrivTurretReset();
         avoidCount = 0;
     }

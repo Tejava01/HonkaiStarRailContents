@@ -2976,13 +2976,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43d97f8ff2fe1d247b6773a9ac47675e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isPlayerHit: 0
   totalRound: 6
-  roundInterval: 2
+  roundDelay: 2.5
   roundCountDown: 3
   goal1: 4
   goal2: 6
-  fireInterval: 0.25
+  fireDelay: 0.25
   turret:
   - {fileID: 105385595}
   - {fileID: 572190543}
