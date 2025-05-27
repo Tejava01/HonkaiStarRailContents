@@ -3096,7 +3096,7 @@ GameObject:
   - component: {fileID: 2122650661}
   - component: {fileID: 2122650662}
   m_Layer: 5
-  m_Name: UIWidgetScreen
+  m_Name: UIWidgetLaserEvasion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
