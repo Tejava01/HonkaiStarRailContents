@@ -16,7 +16,7 @@ public class LaserEvasionSimulator : MonoBehaviour
     [SerializeField] private LaserEvasionTurret[] turret;
 
     [Header("UI")]
-    [SerializeField] private UIWidgetScreen UIWidgetScreen;
+    [SerializeField] private UIWidgetLaserEvasion UIWidgetScreen;
 
     private int[][] turretGraphAry;
     private Coroutine roundRoutineCor;

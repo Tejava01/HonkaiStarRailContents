@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIWidgetScreen : MonoBehaviour
+public class UIWidgetLaserEvasion : MonoBehaviour
 {
     [Header("PivotRightTop")]
     [SerializeField] private Button startBtn;
