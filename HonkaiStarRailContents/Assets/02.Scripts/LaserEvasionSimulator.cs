@@ -82,8 +82,9 @@ public class LaserEvasionSimulator : MonoBehaviour
 
     private void PrivFailAvoid()
     {
+        UIWidgetScreen.StateTxt.color = Color.red;
         UIWidgetScreen.StateTxt.text = "회피 실패";
-        isHit = false;
+        isHit = true;
     }
 
     #region ==================Round Routine=================================
@@ -103,6 +104,7 @@ public class LaserEvasionSimulator : MonoBehaviour
             //카운트 다운
             for (int j = roundCountDown; j > 0; j--)
             {
+                UIWidgetScreen.StateTxt.color = Color.black;
                 UIWidgetScreen.StateTxt.text = $"{j}";
                 yield return wait_1Second;
             }
@@ -135,6 +137,7 @@ public class LaserEvasionSimulator : MonoBehaviour
     {
         if (isHit == false)
         {
+            UIWidgetScreen.StateTxt.color = Color.black;
             UIWidgetScreen.StateTxt.text = "회피 성공";
             avoidCount += 1;
         }
@@ -143,6 +146,8 @@ public class LaserEvasionSimulator : MonoBehaviour
             UIWidgetScreen.Goal1Txt.text = $"목표1) {goal1}회 회피 O";
         if (avoidCount == goal2)
             UIWidgetScreen.Goal2Txt.text = $"목표2) {goal2}회 회피 O";
+
+        isHit = false;
     }
     #endregion
 
