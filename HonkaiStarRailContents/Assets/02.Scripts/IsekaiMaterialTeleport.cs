@@ -15,7 +15,7 @@ public class IsekaiMaterialTeleport : MonoBehaviour
         if (connectTeleport.teleportDone == true)
             return;
 
-        if (other.gameObject.tag == MapConst.player)
+        if (other.gameObject.tag == GroupConst.player)
         {
             teleportDone = true;
             connectTeleport.teleportDone = true;

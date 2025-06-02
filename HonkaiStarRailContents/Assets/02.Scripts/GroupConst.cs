@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MapConst : MonoBehaviour
+public class GroupConst : MonoBehaviour
 {
     public const string player = "Player";
 }

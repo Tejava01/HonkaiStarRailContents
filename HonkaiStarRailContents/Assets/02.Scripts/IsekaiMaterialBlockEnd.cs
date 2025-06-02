@@ -14,7 +14,7 @@ public class IsekaiMaterialBlockEnd : MonoBehaviour
         if (isArrive == true)
             return;
 
-        if (other.gameObject.tag== MapConst.player)
+        if (other.gameObject.tag== GroupConst.player)
         {
             isArrive = true;   
             onPlayerArrive?.Invoke();

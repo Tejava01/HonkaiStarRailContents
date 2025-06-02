@@ -11,7 +11,7 @@ public class LaserEvasionTurretCollider : MonoBehaviour
     //----------------------------------------------------
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == MapConst.player)
+        if (other.gameObject.tag == GroupConst.player)
         {
             onPlayerHit?.Invoke();
         }

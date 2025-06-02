@@ -24,7 +24,7 @@ public class IsekaiMaterialBlock : MonoBehaviour
         }
 
 
-        if (other.gameObject.tag == MapConst.player)
+        if (other.gameObject.tag == GroupConst.player)
         {
             visited = true;
             gameObject.GetComponent<MeshRenderer>().material = visitedMat;
