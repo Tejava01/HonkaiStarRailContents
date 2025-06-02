@@ -16,7 +16,7 @@ public class LaserEvasionSimulator : MonoBehaviour
     [SerializeField] private LaserEvasionTurret[] turret;
 
     [Header("UI")]
-    [SerializeField] private UIWidgetLaserEvasion UIWidgetScreen;
+    [SerializeField] private UIWidgetLaserEvasion UIWidgetLaserEvasion;
 
     private int[][] turretGraphAry;
     private Coroutine roundRoutineCor;
@@ -48,15 +48,15 @@ public class LaserEvasionSimulator : MonoBehaviour
     //----------------------------------------------------
     private void PrivResetUI()
     {
-        UIWidgetScreen.StartBtn.onClick.AddListener(OnClickBtnStartRound);
-        UIWidgetScreen.StartBtn.gameObject.SetActive(true);
-        UIWidgetScreen.ResetBtn.onClick.AddListener(OnClickBtnReset);
-        UIWidgetScreen.ResetBtn.gameObject.SetActive(false);
-        UIWidgetScreen.CurRoundTxt.text = $"0 Round";
-        UIWidgetScreen.StateTxt.text = $"";
-        UIWidgetScreen.Goal1Txt.text = $"목표1) {goal1}회 회피";
-        UIWidgetScreen.Goal2Txt.text = $"목표2) {goal2}회 회피";
-        UIWidgetScreen.RecordTxt.text = $"0회 회피 성공\n 0라운드 남음";
+        UIWidgetLaserEvasion.StartBtn.onClick.AddListener(OnClickBtnStartRound);
+        UIWidgetLaserEvasion.StartBtn.gameObject.SetActive(true);
+        UIWidgetLaserEvasion.ResetBtn.onClick.AddListener(OnClickBtnReset);
+        UIWidgetLaserEvasion.ResetBtn.gameObject.SetActive(false);
+        UIWidgetLaserEvasion.CurRoundTxt.text = $"0 Round";
+        UIWidgetLaserEvasion.StateTxt.text = $"";
+        UIWidgetLaserEvasion.Goal1Txt.text = $"목표1) {goal1}회 회피";
+        UIWidgetLaserEvasion.Goal2Txt.text = $"목표2) {goal2}회 회피";
+        UIWidgetLaserEvasion.RecordTxt.text = $"0회 회피 성공\n 0라운드 남음";
     }
 
     private void PrivSettingTurretGraph()
@@ -82,8 +82,8 @@ public class LaserEvasionSimulator : MonoBehaviour
 
     private void PrivFailAvoid()
     {
-        UIWidgetScreen.StateTxt.color = Color.red;
-        UIWidgetScreen.StateTxt.text = "회피 실패";
+        UIWidgetLaserEvasion.StateTxt.color = Color.red;
+        UIWidgetLaserEvasion.StateTxt.text = "회피 실패";
         isHit = true;
     }
 
@@ -104,11 +104,11 @@ public class LaserEvasionSimulator : MonoBehaviour
             //카운트 다운
             for (int j = roundCountDown; j > 0; j--)
             {
-                UIWidgetScreen.StateTxt.color = Color.black;
-                UIWidgetScreen.StateTxt.text = $"{j}";
+                UIWidgetLaserEvasion.StateTxt.color = Color.black;
+                UIWidgetLaserEvasion.StateTxt.text = $"{j}";
                 yield return wait_1Second;
             }
-            UIWidgetScreen.StateTxt.text = "";
+            UIWidgetLaserEvasion.StateTxt.text = "";
 
             //발사
             foreach (var node in laserPathList)
@@ -124,28 +124,28 @@ public class LaserEvasionSimulator : MonoBehaviour
         }
 
         Debug.Log("종료");
-        UIWidgetScreen.ResetBtn.gameObject.SetActive(true);
+        UIWidgetLaserEvasion.ResetBtn.gameObject.SetActive(true);
     }
 
     private void PrivRoundStart(int currentRound)
     {
         Debug.Log($"{currentRound}라운드 시작");
-        UIWidgetScreen.CurRoundTxt.text = $"{currentRound} Round";
+        UIWidgetLaserEvasion.CurRoundTxt.text = $"{currentRound} Round";
     }
 
     private void PrivCheckRoundResult(int currentRound)
     {
         if (isHit == false)
         {
-            UIWidgetScreen.StateTxt.color = Color.black;
-            UIWidgetScreen.StateTxt.text = "회피 성공";
+            UIWidgetLaserEvasion.StateTxt.color = Color.black;
+            UIWidgetLaserEvasion.StateTxt.text = "회피 성공";
             avoidCount += 1;
         }
-        UIWidgetScreen.RecordTxt.text = $"{avoidCount}회 회피 성공\n {totalRound - currentRound}라운드 남음";
+        UIWidgetLaserEvasion.RecordTxt.text = $"{avoidCount}회 회피 성공\n {totalRound - currentRound}라운드 남음";
         if (avoidCount == goal1)
-            UIWidgetScreen.Goal1Txt.text = $"목표1) {goal1}회 회피 O";
+            UIWidgetLaserEvasion.Goal1Txt.text = $"목표1) {goal1}회 회피 O";
         if (avoidCount == goal2)
-            UIWidgetScreen.Goal2Txt.text = $"목표2) {goal2}회 회피 O";
+            UIWidgetLaserEvasion.Goal2Txt.text = $"목표2) {goal2}회 회피 O";
 
         isHit = false;
     }
@@ -239,7 +239,7 @@ public class LaserEvasionSimulator : MonoBehaviour
 
     private void OnClickBtnStartRound()
     {
-        UIWidgetScreen.StartBtn.gameObject.SetActive(false);
+        UIWidgetLaserEvasion.StartBtn.gameObject.SetActive(false);
 
         //코루틴 중복방지
         if (roundRoutineCor != null)
