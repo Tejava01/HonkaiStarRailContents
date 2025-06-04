@@ -10,11 +10,9 @@ public class ParadoxCubeSimulator : MonoBehaviour
 
     private List<GameObject> selectList = new List<GameObject>();
     private bool isRotate = false;
-    Quaternion pivotRot;
-    Vector3 rayDir;
     //-----------------------------------------------------
 
-    private IEnumerator CorRotatePattern()
+    private IEnumerator CorRotatePattern(Vector3 rayDir)
     {
         isRotate = true;
 
@@ -57,8 +55,8 @@ public class ParadoxCubeSimulator : MonoBehaviour
     {
         if (isRotate == true) return;
 
-        pivotRot = rayPivot[rayIdx].transform.rotation;
-        rayDir = pivotRot * Vector3.down;
+        Quaternion pivotRot = rayPivot[rayIdx].transform.rotation;
+        Vector3 rayDir = pivotRot * Vector3.down;
         foreach (var ray in rayPivot[rayIdx].RayList)
         {
             Debug.DrawRay(ray.transform.position, rayDir * 5f, Color.green, 1f);
@@ -68,6 +66,6 @@ public class ParadoxCubeSimulator : MonoBehaviour
             selectList.Add(hit.collider.gameObject);
         }
 
-        StartCoroutine(CorRotatePattern());
+        StartCoroutine(CorRotatePattern(rayDir));
     }
 }
