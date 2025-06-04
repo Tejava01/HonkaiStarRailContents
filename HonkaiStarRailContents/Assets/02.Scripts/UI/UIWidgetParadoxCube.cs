@@ -9,25 +9,21 @@ public class UIWidgetParadoxCube : MonoBehaviour
     [SerializeField] private ParadoxCubeSimulator simulator;
 
     [Header("PivotCentor")]
-    [SerializeField] private Button secondFloor;
-    [SerializeField] private Button firstFloor;
-    [SerializeField] private Button secondRow;
-    [SerializeField] private Button firstRow;
-    [SerializeField] private Button firstCol;
-    [SerializeField] private Button secondCol;
+    [SerializeField] private Button top;
+    [SerializeField] private Button bottom;
+    [SerializeField] private Button left;
+    [SerializeField] private Button right;
+    [SerializeField] private Button back;
+    [SerializeField] private Button forward;
 
     [Header("PivotRightBottom")]
-    [SerializeField] private Button rightSwipe;
     [SerializeField] private Button leftSwipe;
+    [SerializeField] private Button rightSwipe;
 
-
-    private bool isRotate = false;
     //---------------------------------------------------------
 
-    public void Swipe()
+    public void RayBlock(int rayIdx)
     {
-        if (isRotate == true) return;
-
-        simulator.ParadoxCubeBlock.Swipe(1);
+        simulator.DetectBlock(rayIdx);
     }
 }
