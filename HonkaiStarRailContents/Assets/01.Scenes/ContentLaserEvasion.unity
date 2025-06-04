@@ -354,7 +354,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7157018559499017430, guid: aadd3088b8c28f54597d54588137d3c9, type: 3}
       propertyPath: m_Name
-      value: Turret (3)
+      value: LaserEvasionTurret (3)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -427,7 +427,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7157018559499017430, guid: aadd3088b8c28f54597d54588137d3c9, type: 3}
       propertyPath: m_Name
-      value: Turret
+      value: LaserEvasionTurret
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -500,7 +500,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7157018559499017430, guid: aadd3088b8c28f54597d54588137d3c9, type: 3}
       propertyPath: m_Name
-      value: Turret (2)
+      value: LaserEvasionTurret (2)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -643,7 +643,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7157018559499017430, guid: aadd3088b8c28f54597d54588137d3c9, type: 3}
       propertyPath: m_Name
-      value: Turret (7)
+      value: LaserEvasionTurret (7)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -795,7 +795,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7157018559499017430, guid: aadd3088b8c28f54597d54588137d3c9, type: 3}
       propertyPath: m_Name
-      value: Turret (4)
+      value: LaserEvasionTurret (4)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1120,7 +1120,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7157018559499017430, guid: aadd3088b8c28f54597d54588137d3c9, type: 3}
       propertyPath: m_Name
-      value: Turret (1)
+      value: LaserEvasionTurret (1)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2114,7 +2114,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7157018559499017430, guid: aadd3088b8c28f54597d54588137d3c9, type: 3}
       propertyPath: m_Name
-      value: Turret (5)
+      value: LaserEvasionTurret (5)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2924,7 +2924,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7157018559499017430, guid: aadd3088b8c28f54597d54588137d3c9, type: 3}
       propertyPath: m_Name
-      value: Turret (6)
+      value: LaserEvasionTurret (6)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2991,7 +2991,7 @@ MonoBehaviour:
   - {fileID: 1329389546}
   - {fileID: 1837910430}
   - {fileID: 252958436}
-  UIWidgetScreen: {fileID: 2122650662}
+  UIWidgetLaserEvasion: {fileID: 0}
 --- !u!4 &1891630355
 Transform:
   m_ObjectHideFlags: 0

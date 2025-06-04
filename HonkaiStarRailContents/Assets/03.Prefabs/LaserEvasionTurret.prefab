@@ -82,7 +82,7 @@ GameObject:
   - component: {fileID: 4273514206639395596}
   - component: {fileID: 580697769127311551}
   m_Layer: 0
-  m_Name: LaserTurret
+  m_Name: LaserEvasionTurret
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

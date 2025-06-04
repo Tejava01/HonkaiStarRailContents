@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 9022317355972589646}
   - component: {fileID: 9174612329656016444}
   m_Layer: 0
-  m_Name: Block
+  m_Name: IsekaiMaterialBlock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

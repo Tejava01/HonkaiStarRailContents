@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1712962336911023339}
   - component: {fileID: 4660231248992055584}
   m_Layer: 0
-  m_Name: Teleport
+  m_Name: IsekaiMaterialTeleport
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
